@@ -14,7 +14,7 @@ axios.defaults.withCredentials = true;
   const handleSubmit = (e) => {
     e.preventDefault();
     setError("");
-    axios.post('https://deploy-mern-api.vercel.app/register', {name, email, password})
+    axios.post('https://deploy-mern-api-sepia.vercel.app/register', {name, email, password})
     .then(result => console.log(result))
     .catch(err => console.log(err))
   }
