@@ -8,7 +8,8 @@ const app = express();
 app.use(cors({
     origin: ["https://deploy-mern-frontend-psi.vercel.app"],
     methods: ["POST", "GET"],
-    credentials: true
+    credentials: true,
+    optionsSuccessStatus: 204
 }));
 app.use(express.json());
 
@@ -45,7 +46,11 @@ app.post("/register", async (req, res) => {
         res.json(savedUser);
     } catch (err) {
         console.error("Registration error:", err);
-        res.status(500).json({ error: "An error occurred during registration" });
+        if (err.name === 'MongoTimeoutError') {
+            res.status(503).json({ error: "Database operation timed out. Please try again later." });
+        } else {
+            res.status(500).json({ error: "An error occurred during registration" });
+        }
     }
 });
 
