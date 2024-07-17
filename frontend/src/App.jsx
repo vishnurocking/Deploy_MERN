@@ -32,16 +32,15 @@ function App() {
 
     setLoading(true);
     try {
-      const response = await axios.post("https://deploy-mern-api-sepia.vercel.app/register", {
-        name,
-        email,
-        password,
-      }, {
-        withCredentials: true,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-  });
+      const response = await axios.post(
+        "https://deploy-mern-api-sepia.vercel.app/register",
+        { name, email, password },
+        {
+          withCredentials: true,
+          headers: { 'Content-Type': 'application/json' },
+          timeout: 10000 // 10 seconds timeout
+        }
+      );
       console.log(response.data);
       setSuccess("Registration successful!");
       setName("");
@@ -49,10 +48,10 @@ function App() {
       setPassword("");
     } catch (err) {
       console.error("Error:", err);
-      if (err.response) {
-        setError(
-          err.response.data.error || "An error occurred during registration"
-        );
+      if (err.code === 'ECONNABORTED') {
+        setError("The request timed out. Please try again later.");
+      } else if (err.response) {
+        setError(err.response.data.error || "An error occurred during registration");
       } else if (err.request) {
         setError("No response received from the server. Please try again.");
       } else {
