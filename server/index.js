@@ -2,6 +2,7 @@ const express = require('express')
 const mongoose = require('mongoose')
 const cors = require('cors')
 const RegisterModel = require('./models/Register')
+require("dotenv").config();
 
 const app = express()
 app.use(cors(
@@ -13,29 +14,37 @@ app.use(cors(
 ));
 app.use(express.json())
 
-mongoose.connect('mongodb+srv://vishnu:vishnu123@cluster0.nj8sfsz.mongodb.net/test?retryWrites=true&w=majority&appName=Cluster0');
+const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost:27017/test";
 
+mongoose
+  .connect(MONGODB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log("Connected to MongoDB"))
+  .catch((err) => console.error("Error connecting to MongoDB:", err));
 
 app.get("/", (req, res) => {
-    res.json("Hello");
-})
-app.post('/register', (req, res) => {
-    const {name, email, password} = req.body;
-    RegisterModel.findOne({email: email})
-    .then(user => {
-        if(user) {
-            res.json("Already have an account")
-        } else {
-            RegisterModel.create({name: name, email: email, password: password})
-            .then(result => res.json(result))
-            .catch(err => res.json(err))
-        }
-    }).catch(err => res.json(err))
-})
+  res.json("Hello");
+});
 
 
-   const PORT = process.env.PORT || 3001;
-   app.listen(PORT, () => {
-       console.log(`Server is Running on port ${PORT}`)
-   })
-   
+app.post("/register", (req, res) => {
+  const { name, email, password } = req.body;
+  RegisterModel.findOne({ email: email })
+    .then((user) => {
+      if (user) {
+        res.json("Already have an account");
+      } else {
+        RegisterModel.create({ name: name, email: email, password: password })
+          .then((result) => res.json(result))
+          .catch((err) => res.status(500).json({ error: err.message }));
+      }
+    })
+    .catch((err) => res.status(500).json({ error: err.message }));
+});
+
+const PORT = process.env.PORT || 3001;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
