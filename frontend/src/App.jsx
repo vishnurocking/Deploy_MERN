@@ -4,12 +4,16 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import axios from 'axios'
 
 function App() {
-  const [name, setName] = useState()
-  const [email, setEmail] = useState()
-  const [password, setPassword] = useState()
+  const [name, setName] = useState();
+  const [email, setEmail] = useState();
+  const [password, setPassword] = useState();
+  const [error, setError] = useState("");
+  
 axios.defaults.withCredentials = true;
+  
   const handleSubmit = (e) => {
     e.preventDefault();
+    setError("");
     axios.post('https://deploy-mern-api.vercel.app/register', {name, email, password})
     .then(result => console.log(result))
     .catch(err => console.log(err))
@@ -19,15 +23,15 @@ axios.defaults.withCredentials = true;
       <div className="bg-white p-3 rounded w-25">
         <h2>Register</h2>
         <form onSubmit={handleSubmit}>
-        <div className="mb-3">
-            <label htmlFor="email">
+          <div className="mb-3">
+            <label htmlFor="name">
               <strong>Name</strong>
             </label>
             <input
               type="text"
               placeholder="Enter Name"
               autoComplete="off"
-              name="email"
+              name="name"
               className="form-control rounded-0"
               onChange={(e) => setName(e.target.value)}
             />
@@ -46,7 +50,7 @@ axios.defaults.withCredentials = true;
             />
           </div>
           <div className="mb-3">
-            <label htmlFor="email">
+            <label htmlFor="password">
               <strong>Password</strong>
             </label>
             <input
@@ -54,7 +58,7 @@ axios.defaults.withCredentials = true;
               placeholder="Enter Password"
               name="password"
               className="form-control rounded-0"
-              onChange={(e) => setPassword(e.target.value)}          
+              onChange={(e) => setPassword(e.target.value)}
             />
           </div>
           <button type="submit" className="btn btn-success w-100 rounded-0">
