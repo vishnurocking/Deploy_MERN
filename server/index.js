@@ -34,7 +34,7 @@ app.post("/register", (req, res) => {
   RegisterModel.findOne({ email: email })
     .then((user) => {
       if (user) {
-        res.json("Already have an account");
+        res.status(400).json({ error: "User already exists" });
       } else {
         RegisterModel.create({ name: name, email: email, password: password })
           .then((result) => res.json(result))
