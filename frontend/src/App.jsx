@@ -11,8 +11,6 @@ function App() {
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
 
-  axios.defaults.withCredentials = true;
-
   const validateForm = () => {
     if (!name || !email || !password) {
       setError("All fields are required");
@@ -38,7 +36,12 @@ function App() {
         name,
         email,
         password,
-      });
+      }, {
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+  });
       console.log(response.data);
       setSuccess("Registration successful!");
       setName("");
